@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Mic, MicOff, HandRaised, X, Users, Plus } from "lucide-react";
+import { Mic, MicOff, Hand, X, Users, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -142,7 +142,7 @@ const AudioRoomInterface = ({ room, onLeave }: AudioRoomInterfaceProps) => {
                   : "rounded-full border-vibe-purple text-vibe-purple hover:bg-vibe-purple-light"}
                 onClick={toggleRaiseHand}
               >
-                <HandRaised className="w-5 h-5" />
+                <Hand className="w-5 h-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
