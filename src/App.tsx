@@ -11,6 +11,9 @@ import ExploreRoomsPage from "./pages/ExploreRoomsPage";
 import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
+import OnboardingPage from "./pages/OnboardingPage";
+import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +24,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/onboarding" element={<OnboardingPage />} />
+          <Route path="/sign-in" element={<SignInPage />} />
+          <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Index />} />
             <Route path="rooms" element={<ExploreRoomsPage />} />
