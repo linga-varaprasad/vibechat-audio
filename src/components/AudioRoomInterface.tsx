@@ -1,11 +1,12 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Mic, MicOff, Hand, X, Users, Plus } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { RoomInfo } from "./RoomCard";
+import { useAudioRoom } from "@/hooks/useAudioRoom";
+import { toast } from "@/hooks/use-toast";
 
 interface AudioRoomInterfaceProps {
   room: RoomInfo;
@@ -13,18 +14,54 @@ interface AudioRoomInterfaceProps {
 }
 
 const AudioRoomInterface = ({ room, onLeave }: AudioRoomInterfaceProps) => {
-  const [isMuted, setIsMuted] = useState(true);
+  const { 
+    isAudioInitialized,
+    isMicrophoneEnabled,
+    isConnecting,
+    toggleMicrophone,
+    initializeAudio
+  } = useAudioRoom(room.id);
+  
   const [isHandRaised, setIsHandRaised] = useState(false);
   const [activeParticipants, setActiveParticipants] = useState(
     room.participants.map(p => ({ ...p }))
   );
   
-  const toggleMute = () => {
-    setIsMuted(!isMuted);
+  useEffect(() => {
+    if (!isAudioInitialized && !isConnecting) {
+      const connectToRoom = async () => {
+        toast({
+          title: "Joining audio room",
+          description: "Connecting to the audio room...",
+        });
+        await initializeAudio();
+      };
+      
+      connectToRoom();
+    }
+  }, [isAudioInitialized, isConnecting, initializeAudio]);
+  
+  const handleToggleMute = () => {
+    if (isAudioInitialized) {
+      toggleMicrophone();
+    } else {
+      initializeAudio();
+    }
   };
   
   const toggleRaiseHand = () => {
     setIsHandRaised(!isHandRaised);
+    
+    toast({
+      title: !isHandRaised ? "Hand raised" : "Hand lowered",
+      description: !isHandRaised 
+        ? "The speakers have been notified you'd like to speak." 
+        : "Your hand has been lowered.",
+    });
+  };
+  
+  const handleLeaveRoom = () => {
+    onLeave();
   };
   
   const renderSpeakers = () => {
@@ -101,7 +138,7 @@ const AudioRoomInterface = ({ room, onLeave }: AudioRoomInterfaceProps) => {
           variant="ghost" 
           size="icon"
           className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-          onClick={onLeave}
+          onClick={handleLeaveRoom}
         >
           <X className="w-5 h-5" />
         </Button>
@@ -118,18 +155,27 @@ const AudioRoomInterface = ({ room, onLeave }: AudioRoomInterfaceProps) => {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button 
-                variant={isMuted ? "outline" : "default"}
+                variant={isMicrophoneEnabled ? "default" : "outline"}
                 size="lg"
-                className={isMuted 
-                  ? "rounded-full border-vibe-purple text-vibe-purple hover:bg-vibe-purple-light hover:border-vibe-purple-dark transition-all duration-300" 
-                  : "rounded-full bg-vibe-purple text-white hover:bg-vibe-purple-dark shadow-md hover:shadow-lg transition-all duration-300"}
-                onClick={toggleMute}
+                className={isMicrophoneEnabled 
+                  ? "rounded-full bg-vibe-purple text-white hover:bg-vibe-purple-dark shadow-md hover:shadow-lg transition-all duration-300" 
+                  : "rounded-full border-vibe-purple text-vibe-purple hover:bg-vibe-purple-light hover:border-vibe-purple-dark transition-all duration-300"}
+                onClick={handleToggleMute}
+                disabled={isConnecting}
               >
-                {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                {isConnecting ? (
+                  <span className="flex items-center">
+                    <span className="animate-pulse mr-2">Connecting...</span>
+                  </span>
+                ) : isMicrophoneEnabled ? (
+                  <Mic className="w-5 h-5" />
+                ) : (
+                  <MicOff className="w-5 h-5" />
+                )}
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{isMuted ? "Unmute" : "Mute"}</p>
+              <p>{isMicrophoneEnabled ? "Mute" : "Unmute"}</p>
             </TooltipContent>
           </Tooltip>
           
