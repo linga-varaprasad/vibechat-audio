@@ -41,7 +41,9 @@ const RoomCard = ({ room }: RoomCardProps) => {
         {speakers.slice(0, displayCount).map((participant) => (
           <Avatar 
             key={participant.id}
-            className={`w-10 h-10 border-2 border-white ${participant.isActive ? 'ring-2 ring-vibe-purple' : ''}`}
+            className={`w-10 h-10 border-2 border-white transition-all duration-300 ${
+              participant.isActive ? 'ring-2 ring-vibe-purple animate-pulse-light' : ''
+            } ${isHovered ? 'translate-y-[-2px]' : ''}`}
           >
             <AvatarImage src={participant.avatar} alt={participant.name} />
             <AvatarFallback className="bg-vibe-purple-light text-vibe-purple">
@@ -51,7 +53,7 @@ const RoomCard = ({ room }: RoomCardProps) => {
         ))}
         
         {speakers.length > 3 && (
-          <div className="w-10 h-10 rounded-full bg-vibe-gray-lightest flex items-center justify-center border-2 border-white">
+          <div className={`w-10 h-10 rounded-full bg-vibe-gray-lightest flex items-center justify-center border-2 border-white transition-all duration-300 ${isHovered ? 'translate-y-[-2px]' : ''}`}>
             <span className="text-xs font-medium text-gray-500">+{speakers.length - 3}</span>
           </div>
         )}
@@ -61,7 +63,7 @@ const RoomCard = ({ room }: RoomCardProps) => {
   
   return (
     <div 
-      className="room-card animate-fade-in"
+      className="room-card animate-fade-in cursor-pointer transform transition-all duration-300 hover:translate-y-[-4px]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleJoinRoom}
@@ -82,9 +84,9 @@ const RoomCard = ({ room }: RoomCardProps) => {
         {renderParticipants()}
         
         <button 
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300
                      ${isHovered 
-                       ? 'bg-vibe-purple text-white' 
+                       ? 'bg-vibe-purple text-white scale-105 shadow-md' 
                        : 'bg-vibe-purple-light text-vibe-purple'}`}
         >
           Join

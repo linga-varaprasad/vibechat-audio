@@ -3,6 +3,7 @@ import { useState } from "react";
 import RoomCard, { RoomInfo } from "@/components/RoomCard";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const mockRooms: RoomInfo[] = [
   {
@@ -45,22 +46,26 @@ const mockRooms: RoomInfo[] = [
 
 const Index = () => {
   const [rooms, setRooms] = useState<RoomInfo[]>(mockRooms);
+  const navigate = useNavigate();
   
   return (
-    <div className="pt-4 pb-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">VoiceVibe</h1>
+    <div className="pt-4 pb-24 animate-fade-in">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-vibe-purple to-vibe-purple-dark bg-clip-text text-transparent">
+          VoiceVibe
+        </h1>
         <Button 
-          className="rounded-full bg-vibe-purple hover:bg-vibe-purple-dark text-white"
+          className="rounded-full bg-vibe-purple hover:bg-vibe-purple-dark text-white shadow-sm hover:shadow-md transform transition-all duration-300 hover:scale-105"
           size="sm"
+          onClick={() => navigate("/create-room")}
         >
           <Plus className="mr-1 h-4 w-4" /> Create Room
         </Button>
       </div>
       
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold mb-3">Trending Now</h2>
-        <div className="space-y-4">
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Trending Now</h2>
+        <div className="space-y-5">
           {rooms.map((room) => (
             <RoomCard key={room.id} room={room} />
           ))}
